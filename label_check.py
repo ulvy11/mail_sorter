@@ -1,12 +1,5 @@
 from utils import *
-from label_rules import EXPECTED_LABELS, TO_CLASSIFY
-
-TRANSFORMATION_RULES = {
-    "banque" : "banques/crédit agricole",
-    "astek" : "travail/Astek",
-    "anime\\_store" : "anime store",
-    "animestore" : "anime store"
-}
+from label_rules import EXPECTED_LABELS, TO_CLASSIFY, TRANSFORMATION_RULES
 
 def check_labels() -> None:
     mails_labeled = get_pickle(MAILS_LABELED_PICKLE_FILE)
