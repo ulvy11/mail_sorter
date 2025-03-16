@@ -191,7 +191,7 @@ def delete_promotions() -> None:
     try:
         service = build("gmail", "v1", credentials=CredentialsManager.get_creds())
         # Search for messages in the Promotions category
-        results = service.users().messages().list(userId="me", q="category:promotions").execute()
+        results = service.users().messages().list(userId="me", q="category:promotions -has:userlabels").execute()
         messages = results.get('messages', [])
 
         # If there are no messages, return
