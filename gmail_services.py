@@ -180,8 +180,8 @@ def set_labels() -> None:
                 labels_ids[label] = [label_id, 1]
             service.users().messages().modify(userId='me', id=msg_id, body={'removeLabelIds': ["INBOX"], 'addLabelIds': [label_id]}).execute()
         print(f"\nUsed labels ({len(labels_ids)}):")
-        for label in labels_ids.keys():
-            print(f"\t- {label[0]} ({label[1]})")
+        for label, value in labels_ids.items():
+            print(f"\t- {label} ({value[1]})")
         os.remove(MAILS_LABELED_PICKLE_FILE)
 
     except HttpError as error:
