@@ -152,7 +152,7 @@ def define_labels(creds: Credentials, *, init_index: int = 0, max_page: int = No
 
 def set_labels(creds: Credentials) -> None:
     mails_labeled = get_pickle(MAILS_LABELED_PICKLE_FILE)
-    labels_ids: dict[str, str] = {}
+    labels_ids: dict[str, tuple[str, int]] = {}
     try:
         # service = build("gmail", "v1", credentials=creds)
         # getID(service)
@@ -164,15 +164,16 @@ def set_labels(creds: Credentials) -> None:
             msg_id = mail_labeled["id"]
             label = mail_labeled[LABEL]
             print(f"{i}/{tailleTotale} - {msg_id} [{label}]")
-            if label in labels_ids:
-                label_id = labels_ids[label]
+            if label in labels_ids.keys():
+                label_id = labels_ids[label][0]
+                labels_ids[label][1] += 1
             else:
                 label_id = get_or_create_label(service, label)
-                labels_ids[label] = label_id
+                labels_ids[label] = [label_id, 1]
             service.users().messages().modify(userId='me', id=msg_id, body={'removeLabelIds': ["INBOX"], 'addLabelIds': [label_id]}).execute()
         print(f"\nUsed labels ({len(labels_ids)}):")
         for label in labels_ids.keys():
-            print(f"\t- {label}")
+            print(f"\t- {label[0]} ({label[1]})")
         os.remove(MAILS_LABELED_PICKLE_FILE)
 
     except HttpError as error:
