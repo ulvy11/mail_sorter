@@ -1,0 +1,10 @@
+# python
+**/.venv
+**/__pycache__
+
+# app credentials
+**/credentials.json
+**/token.json
+
+# app specific
+**/mails_labeled.pck
