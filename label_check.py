@@ -9,13 +9,13 @@ def check_labels() -> None:
             mail_labeled[LABEL] = TRANSFORMATION_RULES[label]
         elif label not in EXPECTED_LABELS:
             print(label)
-            if ask_user_choice(["y", "n"], text_pre_choice=f"change to {TO_CLASSIFY}?") == "y":
+            if ask_user_yn(f"change to {TO_CLASSIFY}?"):
                 mail_labeled[LABEL] = TO_CLASSIFY
             else:
                 new_label_found = False
                 while not new_label_found:
                     new_label = input("Choose another label:")
-                    if new_label_found := (ask_user_choice(["y", "n"], text_pre_choice=f"new label : '{new_label}'") == "y"):
+                    if new_label_found := ask_user_yn(f"new label : '{new_label}'"):
                         mail_labeled[LABEL] = new_label
 
     register_pickle(mails_labeled, MAILS_LABELED_PICKLE_FILE)
