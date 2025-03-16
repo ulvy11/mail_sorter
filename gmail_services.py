@@ -114,6 +114,7 @@ def check_labels_existance(creds: Credentials, labels: list[str]) -> None:
 
 def define_labels(creds: Credentials, *, init_index: int = 0, max_page: int = None) -> list[dict[str, str]]:
     mails_labeled: list[dict[str, str]] = []
+    labels: dict[str, int] = {}
     # Setup Ollama
     if not OllamaMistralPrompting.ollama_mistral_define_assistant():
         print("Assistant badly defined")
@@ -135,6 +136,11 @@ def define_labels(creds: Credentials, *, init_index: int = 0, max_page: int = No
             while (label.endswith('"') or label.endswith("'")) and (label.startswith('"') or label.endswith("'")):
                 label = label[1:-1]
 
+            if label in labels.keys():
+                labels[label] += 1
+            else:
+                labels[label] = 1
+
             mail[LABEL] = label
             mail_labeled = {
                 "id": mail["id"],
@@ -146,6 +152,10 @@ def define_labels(creds: Credentials, *, init_index: int = 0, max_page: int = No
             mails_labeled.append(mail_labeled)
     except HttpError as error:
         print(f"An error occurred: {error}")
+
+    print(f"\nLabels generated ({len(labels)})")
+    for label, count in labels.items():
+        print(f"\t- {label} ({count})")
 
     register_pickle(mails_labeled, MAILS_LABELED_PICKLE_FILE)
     return mails_labeled
