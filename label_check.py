@@ -16,6 +16,7 @@ def check_labels() -> None:
     for mail_labeled in mails_labeled:
         label: str = mail_labeled[LABEL]
         if label in TRANSFORMATION_RULES.keys():
+            print(f"Transform \"{label}\" -> \"{TRANSFORMATION_RULES[label]}\"")
             mail_labeled[LABEL] = TRANSFORMATION_RULES[label]
         elif label not in EXPECTED_LABELS:
             print(label)
