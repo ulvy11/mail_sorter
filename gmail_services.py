@@ -1,3 +1,4 @@
+from credentials_manager import CredentialsManager
 from utils import *
 from ollama_mistral_prompting import OllamaMistralPrompting
 
@@ -5,7 +6,6 @@ import os.path
 
 from pprint import pprint
 
-from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
@@ -103,16 +103,16 @@ def get_or_create_label(service, label_name):
         print(f"An error occurred: {error}")
         return None
 
-def check_labels_existance(creds: Credentials, labels: list[str]) -> None:
+def check_labels_existance(labels: list[str]) -> None:
     return -1
     try:
-        service = build("gmail", "v1", credentials=creds)
+        service = build("gmail", "v1", credentials=CredentialsManager.get_creds())
         for label in labels:
             print(get_or_create_label(service, label))
     except HttpError as error:
         print(f"An error occurred: {error}")
 
-def define_labels(creds: Credentials, *, init_index: int = 0, max_page: int = None) -> list[dict[str, str]]:
+def define_labels(*, init_index: int = 0, max_page: int = None) -> list[dict[str, str]]:
     mails_labeled: list[dict[str, str]] = []
     labels: dict[str, int] = {}
     # Setup Ollama
@@ -121,7 +121,7 @@ def define_labels(creds: Credentials, *, init_index: int = 0, max_page: int = No
         return
 
     try:
-        service = build("gmail", "v1", credentials=creds)
+        service = build("gmail", "v1", credentials=CredentialsManager.get_creds())
         data = get_ids(service, init_index=init_index, max_page=max_page)
         i = 0
         tailleTotale = len(data)
@@ -160,13 +160,11 @@ def define_labels(creds: Credentials, *, init_index: int = 0, max_page: int = No
     register_pickle(mails_labeled, MAILS_LABELED_PICKLE_FILE)
     return mails_labeled
 
-def set_labels(creds: Credentials) -> None:
+def set_labels() -> None:
     mails_labeled = get_pickle(MAILS_LABELED_PICKLE_FILE)
     labels_ids: dict[str, tuple[str, int]] = {}
     try:
-        # service = build("gmail", "v1", credentials=creds)
-        # getID(service)
-        service = build("gmail", "v1", credentials=creds)
+        service = build("gmail", "v1", credentials=CredentialsManager.get_creds())
         i = 0
         tailleTotale = len(mails_labeled)
         for mail_labeled in mails_labeled:
@@ -185,6 +183,27 @@ def set_labels(creds: Credentials) -> None:
         for label in labels_ids.keys():
             print(f"\t- {label[0]} ({label[1]})")
         os.remove(MAILS_LABELED_PICKLE_FILE)
+
+    except HttpError as error:
+        print(f"An error occurred: {error}")
+
+def delete_promotions() -> None:
+    try:
+        service = build("gmail", "v1", credentials=CredentialsManager.get_creds())
+        # Search for messages in the Promotions category
+        results = service.users().messages().list(userId="me", q="category:promotions").execute()
+        messages = results.get('messages', [])
+
+        # If there are no messages, return
+        if not messages:
+            print("No promotional emails found.")
+            return
+
+        # Delete messages in batches
+        for message in messages:
+            service.users().messages().trash(userId="me", id=message['id']).execute()
+
+        print(f"Successfully deleted {len(messages)} promotional emails.")
 
     except HttpError as error:
         print(f"An error occurred: {error}")
