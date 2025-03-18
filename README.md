@@ -2,9 +2,16 @@
 
 ## Prerequisites
 
-- Python 3.x installed
+- [Python 3.x](https://www.python.org/downloads/) installed (x $\geq$ 12)
 - Gmail API activated in Google Cloud Console
-- Ollama installed with Mistral model
+  - [Doc to create credentials](https://developers.google.com/identity/protocols/oauth2/web-server?hl=fr#creatingcred)
+- [Ollama](https://ollama.com/download) installed
+
+## Pull Mistral model
+
+```bash
+ollama pull mistral
+```
 
 ## Installation
 
@@ -25,7 +32,7 @@
 Launch main script :
 
 ```bash
-python3 main.py
+python main.py
 ```
 
 You will be asked to choose between 4 choices:
@@ -33,4 +40,4 @@ You will be asked to choose between 4 choices:
 1. Generate labels for mails in your inbox without user label
 2. Check for generated labels and transform them
 3. Set generated then transformed labels, and removing `inbox` label
-4. Delete mails with category promotion without user label
+4. Do all three
