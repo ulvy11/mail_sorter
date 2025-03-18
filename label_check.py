@@ -18,10 +18,11 @@ def check_labels() -> None:
     for mail_labeled in mails_labeled:
         label: str = mail_labeled[LABEL]
         if label in TRANSFORMATION_RULES.keys():
+            print(f"{mail_labeled[SENDER]} - {mail_labeled[OBJECT]} [{label}]")
             print(f'Transform "{label}" -> "{TRANSFORMATION_RULES[label]}"')
             mail_labeled[LABEL] = TRANSFORMATION_RULES[label]
         elif label not in [*EXPECTED_LABELS, *TRANSFORMATION_RULES.values()]:
-            print(label)
+            print(f"{mail_labeled[SENDER]} - {mail_labeled[OBJECT]} [{label}]")
             if ask_user_yn("Do you want to change the label?"):
                 change_label(mail_labeled)
 

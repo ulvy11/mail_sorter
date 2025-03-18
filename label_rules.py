@@ -17,17 +17,18 @@ LABELS_WITH_RULES = {
 def prompt_rules() -> str:
     res = ""
     for label, rule in LABELS_WITH_RULES.items():
-        res += f"- \"{label}\" : {rule}\n"
+        res += f'- "{label}" : {rule}\n'
     # removing final EOL
     return res[:-1]
+
 
 TO_CLASSIFY = "to_classify"
 EXPECTED_LABELS = [label for label in LABELS_WITH_RULES.keys()] + [TO_CLASSIFY]
 
 TRANSFORMATION_RULES = {
-    "banque" : "banques/crédit agricole",
-    "astek" : "travail/Astek",
-    "anime\\_store" : "anime store",
-    "animestore" : "anime store",
-    "cogito" : "esprit critique"
+    "banque": "banques/crédit agricole",
+    "astek": "travail/Astek",
+    "anime\\_store": "anime store",
+    "animestore": "anime store",
+    "cogito": "esprit critique",
 }

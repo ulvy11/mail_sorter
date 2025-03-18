@@ -4,8 +4,6 @@ from ollama_mistral_prompting import OllamaMistralPrompting
 
 import os.path
 
-from pprint import pprint
-
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
@@ -90,7 +88,7 @@ def define_labels(*, max_page: int = None) -> list[dict[str, str]]:
         for mail in data:
             i += 1
             objet, expediteur = getObjetExpediteur(service, mail["id"])
-            print(f"{i}/{tailleTotale} - {expediteur} + {objet}")
+            print(f"{i}/{tailleTotale} - {expediteur} + {objet}", end=" ")
 
             label = OllamaMistralPrompting.ollama_getLabel(expediteur, objet)
 
@@ -110,8 +108,10 @@ def define_labels(*, max_page: int = None) -> list[dict[str, str]]:
                 "id": mail["id"],
                 THREAD_ID: mail[THREAD_ID],
                 LABEL: label,
+                OBJECT: objet,
+                SENDER: expediteur,
             }
-            pprint(mail_labeled)
+            print(f"[{label}]")
             print()
             mails_labeled.append(mail_labeled)
     except HttpError as error:
@@ -136,7 +136,9 @@ def set_labels() -> None:
             i += 1
             msg_id = mail_labeled["id"]
             label = mail_labeled[LABEL]
-            print(f"{i}/{tailleTotale} - {msg_id} [{label}]")
+            print(
+                f"{i}/{tailleTotale} - {mail_labeled[SENDER]} - {mail_labeled[OBJECT]} [{label}]"
+            )
             if label in labels_ids.keys():
                 label_id = labels_ids[label][0]
                 labels_ids[label][1] += 1
