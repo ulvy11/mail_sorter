@@ -9,10 +9,10 @@ CHOICES = {
     1: "to generate labels",
     2: "to check labels",
     3: "to set labels",
-    4: "to do 1, 2, and 3",
+    4: "to generate, then check then apply labels",
 }
 
-CHOICES_NOT_NEEDING_PICKLE_FILE = [1]
+CHOICES_NOT_NEEDING_PICKLE_FILE = [1, 4]
 
 
 def main():
